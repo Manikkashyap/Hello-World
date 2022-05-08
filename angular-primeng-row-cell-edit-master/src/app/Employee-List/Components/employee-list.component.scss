@@ -1,0 +1,63 @@
+:host ::ng-deep .p-cell-editing {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+
+:host::ng-deep.ui-paginator
+{
+  text-align: right !important;
+}
+
+:host::ng-deep.body .ui-table .ui-sortable-column.ui-state-highlight {
+  /* background-color: #007ad9; */
+  /* color: #ffffff; */
+  color: #75bef8 !important;
+  background-color: #f4f4f4;
+  /* border: #75bef8; */
+}
+
+#delete{
+  margin-left: 14px;
+}
+
+.sorticon{
+  color: #75bef8;
+  size: 0.2rem !important;
+}
+
+
+.drop{
+  text-align: left;
+}
+
+.pull-right{
+  float: right!important;
+}
+
+.required{
+  color: red;
+}
+
+:host ::ng-deep .p-button {
+  margin: 0 .5rem 0 0;
+  min-width: 10rem;
+}
+
+p {
+  margin: 0;
+}
+
+:host ::ng-deep .cancel{
+  padding-left: 10px !important;
+}
+
+.confirmation-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:host ::ng-deep .p-dialog .p-button {
+  min-width: 6rem;
+}
