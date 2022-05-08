@@ -1,0 +1,146 @@
+<div class="row">
+  <div class="container-fluid">
+    <div class="col-lg-12">
+      <div class="d-sm-flex align-items-center justify-content-between mt-4 mb-3">
+        <h2 class="text-uppercase font-weight-bold" style="text-align: center">
+          LIST OF EMPLOYEES
+        </h2>
+      </div>
+      <div class="card card2 shadow mb-4">
+        <!-- Card Body -->
+        <div class="card-body">
+          <p-table styleClass="p-datatable-customers" #dt [value]="dataSource" [paginator]="true"
+            paginatorPosition="bottom" [rows]="10" [rowHover]="true" [rowsPerPageOptions]="[5, 10, 15, 20]"
+            [pageLinks]="3" [filterDelay]="0"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [showCurrentPageReport]="true" [globalFilterFields]="['full_name', 'department', 'salary']">
+            <ng-template pTemplate="caption">
+              <div class="p-d-flex">
+                <div class="pull-right">
+                  <span class="p-input-icon-left">
+                    <input pInputText type="text" class="form-control"
+                      (input)="dt.filterGlobal($event.target.value, 'contains')" placeholder="Global Search" />
+                  </span>
+                </div>
+
+                <div class="drop">
+                  <p-dropdown [options]="departments" (onChange)="onDepartmentChange($event)"
+                    placeholder="Filter By Department" optionLabel="label" [(ngModel)]="label">
+                  </p-dropdown>
+                  <p-button type="button" *ngIf="filterOn" class="float-end" icon="pi pi-refresh"
+                    (click)="filterReset()" styleClass="p-button-text p-button-outlined"></p-button>
+                </div>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="header" let-columns>
+              <tr style="text-align: center">
+                <th pSortableColumn="full_name">
+                  Employee Name<p-sortIcon class="sorticon" field="full_name"></p-sortIcon>
+                </th>
+                <th pSortableColumn="department">
+                  Department<p-sortIcon class="sorticon" field="department"></p-sortIcon>
+                </th>
+
+                <th pSortableColumn="salary">
+                  Salary<p-sortIcon class="sorticon" field="salary"></p-sortIcon>
+                </th>
+
+                <th>Actions</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-plans>
+              <tr style="text-align: center">
+                <td>{{ plans.full_name }}</td>
+                <td>{{ plans.department }}</td>
+                <td>{{ plans.salary }}</td>
+                <td>
+                  <img type="button" src="../../../assets/img/pencil.png" (click)="(plans.id)" id="edit" height="20"
+                    width="20" (click)="showEditModal(plans.id)" pTooltip="Edit" tooltipPosition="top">
+                  <img type="button" src="../../../assets/img/bin.png" id="delete" height="20" width="20"
+                    (click)="showDeleteModalDialog(plans.id)" pTooltip="Delete" tooltipPosition="top">
+                  <i type="button" id="delete" (click)="showAddModal()" class="pi pi-plus-circle"
+                    style="font-size: 1.5rem;" data-toggle="modal" data-target="#exampleModal"
+                    pTooltip="Add" tooltipPosition="top"></i>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+              <tr>
+                <td [attr.colspan]="columns ? 4 : 4">No records found</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Delete Modal -->
+<p-dialog class="deleteModal" header="Ready to Delete?" [(visible)]="displayModal" [style]="{ width: '50vw' }"
+  [baseZIndex]="10000">
+  <p class="m-0">Do you want to delete this record?</p>
+  <br />
+  <ng-container>
+    <p-button icon="pi pi-check" (click)="deleteEmployee()" label="Yes" styleClass="p-button-text"></p-button>
+    <p-button class="cancel" icon="pi pi-times" (click)="displayModal = false" label="No"></p-button>
+  </ng-container>
+</p-dialog>
+
+<!--Add Modal -->
+<p-dialog class="deleteModal" header="Employee Modal" [(visible)]="displayAddModal" [style]="{ width: '50vw' }"
+  [baseZIndex]="10000">
+  <div class="card mb-4">
+    <h5 class="card-header text-center purplebgcolor">
+      {{ modalHeading }}
+    </h5>
+    <div class="card-body pt-0">
+      <form [formGroup]="EmployeeForm">
+        <div class="form-group">
+          <label>Employee Name</label>
+          <input type="title" formControlName="full_name" maxlength="50"
+            [ngClass]="{ 'is-invalid': submitted && f.full_name.errors }" class="form-control" id="title" />
+          <div *ngIf="submitted && f.full_name.invalid">
+            <div class="required" *ngIf="f.full_name.errors?.required">
+              Please Enter Employee Name.
+            </div>
+            <div class="required" *ngIf="f.full_name.errors?.pattern">
+              Please Enter Valid Employee Name.
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Salary</label>
+          <input type="number" formControlName="salary" maxlength="50"
+            [ngClass]="{ 'is-invalid': submitted && f.salary.errors }" class="form-control" />
+          <div *ngIf="submitted && f.salary.invalid">
+            <div class="required" *ngIf="f.salary.errors?.required">
+              Please Enter Salary.
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <!-- <input type="text" formControlName="department" class="form-control form-control-lg" [ngClass]="{'is-invalid': submitted && f.department.errors}" /> -->
+          <select formControlName="department" name="department" class="form-control"
+            [ngClass]="{ 'is-invalid': f.department.errors && submitted }">
+            <option value="">Select Department</option>
+            <option *ngFor="let obj of departments" [value]="obj.label">
+              {{ obj.label }}
+            </option>
+          </select>
+          <div *ngIf="submitted && f.department.invalid">
+            <div class="required" *ngIf="f.department.errors?.required">
+              Please Enter Department.
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <br />
+  <ng-container>
+    <p-button icon="pi pi-check" (click)="onSubmit($event)" label="Yes" styleClass="p-button-text"></p-button>
+    <p-button class="cancel" icon="pi pi-times" (click)="displayAddModal = false" label="No"></p-button>
+  </ng-container>
+</p-dialog>
